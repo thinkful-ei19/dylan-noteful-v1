@@ -8,9 +8,10 @@ const data = require('./db/notes');
 const app = express();
 app.use(express.static('public'));
 
-
 app.get('/api/notes', (req, res) => {
-  res.json(data);
+  const searchTerm = req.query.searchTerm;
+  const filteredData = data.filter(item => item.title.includes(searchTerm));
+  res.json(filteredData);
 });
 
 app.get('/api/notes/:id', (req, res) => {
@@ -25,7 +26,5 @@ app.listen(8080, function() {
 }).on('error', err => {
   console.error(err);
 });
-
-console.log('hello world!');
 
 // INSERT EXPRESS APP CODE HERE...
