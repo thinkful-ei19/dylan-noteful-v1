@@ -9,15 +9,8 @@ const app = express();
 app.use(express.static('public'));
 
 app.get('/api/notes', (req, res) => {
-
   const searchTerm = req.query.searchTerm;
-
-  if (searchTerm) {
-    const filteredData = data.filter(item => item.title.includes(searchTerm));
-    res.json(filteredData);
-  } else {
-    res.json(data);
-  }
+  searchTerm ? res.json(data.filter(item => item.title.includes(searchTerm))) : res.json(data);
 });
 
 app.get('/api/notes/:id', (req, res) => {
