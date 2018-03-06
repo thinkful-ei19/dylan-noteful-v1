@@ -6,6 +6,8 @@ const morgan = require('morgan');
 
 // TEMP: Simple In-Memory Database
 const data = require('./db/notes');
+const simDB = require('./db/simDB');
+const notes = simDB.initialize(data);
 
 const app = express();
 
@@ -17,15 +19,22 @@ app.get('/boom', (req, res, next) => {
   throw new Error('Boom!');
 });
 
-app.get('/api/notes', (req, res) => {
-  const searchTerm = req.query.searchTerm;
-  searchTerm ? res.json(data.filter(item => item.title.includes(searchTerm))) : res.json(data);
+app.get('/api/notes', (req, res, next) => {
+  const { searchTerm } = req.query;
+
+  notes.filter(searchTerm, (err, list) => {
+    if (err) return next(err);
+    res.json(list);
+  });
+
 });
 
-app.get('/api/notes/:id', (req, res) => {
-  const id = req.params.id;
-  const note = data.find(item => item.id === parseInt(id));
-  res.json(note);
+app.get('/api/notes/:id', (req, res, next) => {
+  const { id } = req.params;
+  notes.find(id, (err, item) => {
+    if (err) return next(err);
+    item ? res.json(item) : next(err);
+  });
 }); 
 
 app.use((req, res, next) => {
