@@ -2,7 +2,9 @@
 
 const express = require('express');
 const { PORT } = require('./config');
-const morgan = require('morgan');
+const logger = require('./middleware/logger');
+
+// const morgan = require('morgan');
 
 // TEMP: Simple In-Memory Database
 const data = require('./db/notes');
@@ -11,7 +13,9 @@ const notes = simDB.initialize(data);
 
 const app = express();
 
-app.use(morgan('common'));
+// app.use(morgan('common'));
+
+app.use(logger);
 
 app.use(express.static('public'));
 app.use(express.json());
