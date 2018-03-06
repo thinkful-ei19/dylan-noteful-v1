@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const { PORT } = require('./config');
 
 // TEMP: Simple In-Memory Database
 const data = require('./db/notes');
@@ -20,7 +21,7 @@ app.get('/api/notes/:id', (req, res) => {
 }); 
 
 
-app.listen(8080, function() {
+app.listen(PORT, function() {
   console.info(`Server listening on ${this.address().port}`);
 }).on('error', err => {
   console.error(err);
