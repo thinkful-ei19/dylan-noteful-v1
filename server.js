@@ -9,9 +9,13 @@ const app = express();
 app.use(express.static('public'));
 
 app.get('/api/notes', (req, res) => {
-  const searchTerm = req.query.searchTerm;
-  const filteredData = data.filter(item => item.title.includes(searchTerm));
-  res.json(filteredData);
+  if (req.query.searchTerm) {
+    const searchTerm = req.query.searchTerm;
+    const filteredData = data.filter(item => item.title.includes(searchTerm));
+    res.json(filteredData);
+  } else {
+    res.json(data);
+  }
 });
 
 app.get('/api/notes/:id', (req, res) => {
