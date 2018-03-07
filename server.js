@@ -2,9 +2,8 @@
 
 const express = require('express');
 const { PORT } = require('./config');
-const logger = require('./middleware/logger');
 
-// const morgan = require('morgan');
+const morgan = require('morgan');
 
 // TEMP: Simple In-Memory Database
 const data = require('./db/notes');
@@ -13,9 +12,7 @@ const notes = simDB.initialize(data);
 
 const app = express();
 
-// app.use(morgan('common'));
-
-app.use(logger);
+app.use(morgan('common'));
 
 app.use(express.static('public'));
 app.use(express.json());
@@ -45,6 +42,8 @@ app.put('/api/notes/:id', (req, res, next) => {
 
   const updateObj = {};
   const updateFields = ['title', 'content'];
+
+  console.log(req.body);
 
   updateFields.forEach(field => {
     if (field in req.body) updateObj[field] = req.body[field];
