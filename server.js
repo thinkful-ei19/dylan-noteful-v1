@@ -12,10 +12,6 @@ app.use(morgan('dev'));
 app.use(express.static('public'));
 app.use(express.json());
 
-// app.get('/boom', (req, res, next) => {
-//   throw new Error('Boom!');
-// });
-
 app.use('/v1', notesRouter);
 
 app.use((req, res, next) => {
@@ -32,11 +28,9 @@ app.use((err, req, res, next) => {
   });
 });
 
-
 app.listen(PORT, function() {
   console.info(`Server listening on ${this.address().port}`);
 }).on('error', err => {
   console.error(err);
 });
 
-// INSERT EXPRESS APP CODE HERE...
