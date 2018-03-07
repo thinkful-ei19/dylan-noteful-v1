@@ -1,60 +1,22 @@
 'use strict';
 
 const express = require('express');
-const { PORT } = require('./config');
-
 const morgan = require('morgan');
-
-// TEMP: Simple In-Memory Database
-const data = require('./db/notes');
-const simDB = require('./db/simDB');
-const notes = simDB.initialize(data);
+const { PORT } = require('./config');
+const notesRouter = require('./routers/notes-router');
 
 const app = express();
 
-app.use(morgan('common'));
+app.use(morgan('dev'));
 
 app.use(express.static('public'));
 app.use(express.json());
 
-app.get('/boom', (req, res, next) => {
-  throw new Error('Boom!');
-});
+// app.get('/boom', (req, res, next) => {
+//   throw new Error('Boom!');
+// });
 
-app.get('/api/notes', (req, res, next) => {
-  const { searchTerm } = req.query;
-  notes.filter(searchTerm, (err, list) => {
-    if (err) return next(err);
-    res.json(list);
-  });
-});
-
-app.get('/api/notes/:id', (req, res, next) => {
-  const { id } = req.params;
-  notes.find(id, (err, item) => {
-    if (err) return next(err);
-    item ? res.json(item) : next();
-  });
-}); 
-
-app.put('/api/notes/:id', (req, res, next) => {
-  const { id } = req.params;
-
-  const updateObj = {};
-  const updateFields = ['title', 'content'];
-
-  console.log(req.body);
-
-  updateFields.forEach(field => {
-    if (field in req.body) updateObj[field] = req.body[field];
-  });
-
-  notes.update(id, updateObj, (err, item) => {
-    if (err) return next(err);
-    item ? res.json(item) : next();
-  });
-
-});
+app.use('/v1', notesRouter);
 
 app.use((req, res, next) => {
   const err = new Error('Not Found');
