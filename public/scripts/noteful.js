@@ -117,6 +117,9 @@ const noteful = (function () {
       api.delete(noteId, () => {
         api.search(store.currentSearchTerm, searchResponse => {
           store.notes = searchResponse;
+          if (noteId === store.currentNote.id) {
+            store.currentNote = {};
+          }
           render();
         });
       });
