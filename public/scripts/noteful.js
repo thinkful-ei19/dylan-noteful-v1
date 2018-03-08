@@ -43,10 +43,11 @@ const noteful = (function () {
 
       const noteId = getNoteIdFromElement(event.currentTarget);
 
-      api.details(noteId, detailsResponse => {
-        store.currentNote = detailsResponse;
-        render();
-      });
+      api.details(noteId)
+        .then(detailsResponse => {
+          store.currentNote = detailsResponse;
+          render();
+        });
 
     });
   }
@@ -58,10 +59,11 @@ const noteful = (function () {
       const searchTerm = $('.js-note-search-entry').val();
       store.currentSearchTerm = searchTerm ? { searchTerm } : {};
 
-      api.search(store.currentSearchTerm, searchResponse => {
-        store.notes = searchResponse;
-        render();
-      });
+      api.search(store.currentSearchTerm)
+        .then(searchResponse => {
+          store.notes = searchResponse;
+          render();
+        });
 
     });
   }
@@ -79,22 +81,25 @@ const noteful = (function () {
       };
 
       if (store.currentNote.id) {
-        api.update(noteObj.id, noteObj, updateResponse => {
-          store.currentNote = updateResponse;
-          api.search(store.currentSearchTerm, updateResponse => {
+        api.update(noteObj.id, noteObj)
+          .then(updateResponse => {
+            store.currentNote = updateResponse;
+            return api.search(store.currentSearchTerm);
+          })
+          .then(updateResponse => {
             store.notes = updateResponse;
             render();
           });
-        });
       } else {
-        api.create(noteObj, updateResponse => {
-          store.currentNote = updateResponse;
-          api.search(store.currentSearchTerm, updateResponse => {
+        api.create(noteObj)
+          .then(updateResponse => {
+            store.currentNote = updateResponse;
+            return api.search(store.currentSearchTerm);
+          })
+          .then(updateResponse => {
             store.notes = updateResponse;
             render();
           });
-
-        });
       }
 
     });
@@ -114,15 +119,17 @@ const noteful = (function () {
 
       const noteId = getNoteIdFromElement(event.currentTarget);
 
-      api.delete(noteId, () => {
-        api.search(store.currentSearchTerm, searchResponse => {
+      api.delete(noteId)
+        .then(() => {
+          return api.search(store.currentSearchTerm);
+        })
+        .then(searchResponse => {
           store.notes = searchResponse;
           if (noteId === store.currentNote.id) {
             store.currentNote = {};
           }
           render();
         });
-      });
       
     });
   }

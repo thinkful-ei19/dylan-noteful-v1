@@ -9,18 +9,25 @@ const notes = simDB.initialize(data);
 
 router.get('/notes', (req, res, next) => {
   const { searchTerm } = req.query;
-  notes.filter(searchTerm, (err, list) => {
-    if (err) return next(err);
-    res.json(list);
-  });
+
+  notes.filter(searchTerm)
+    .then(list => {
+      res.json(list);
+    })
+    .catch(err => {
+      next(err);
+    });
 });
 
 router.get('/notes/:id', (req, res, next) => {
   const { id } = req.params;
-  notes.find(id, (err, item) => {
-    if (err) return next(err);
-    item ? res.json(item) : next();
-  });
+  notes.find(id)
+    .then(item => {
+      item ? res.json(item) : next();
+    })
+    .catch(err => {
+      next(err);
+    });
 }); 
 
 router.put('/notes/:id', (req, res, next) => {
@@ -35,10 +42,13 @@ router.put('/notes/:id', (req, res, next) => {
     if (field in req.body) updateObj[field] = req.body[field];
   });
 
-  notes.update(id, updateObj, (err, item) => {
-    if (err) return next(err);
-    item ? res.json(item) : next();
-  });
+  notes.update(id, updateObj)
+    .then(item => {
+      item ? res.json(item) : next();
+    })
+    .catch(err => {
+      next(err);
+    });
 
 });
 
@@ -52,20 +62,25 @@ router.post('/notes', (req, res, next) => {
     return next(err);
   }
 
-  notes.create(newItem, (err, item) => {
-    if (err) return next(err);
-    item ? res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item) : next();
-  });
-
+  notes.create(newItem)
+    .then(item => {
+      item ? res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item) : next();
+    })
+    .catch(err => {
+      next(err);
+    });
 });
 
 router.delete('/notes/:id', (req, res, next) => {
   const { id } = req.params;
 
-  notes.delete(id, (err, item) => {
-    if (err) return next(err);
-    item ? res.status(204).end() : next();
-  });
+  notes.delete(id)
+    .then(item => {
+      item ? res.status(204).end() : next();
+    })
+    .catch(err => {
+      return next(err);
+    });
 });
 
 module.exports = router;
