@@ -1,6 +1,6 @@
 'use strict';
 
-const app = require('../server');
+const { app, runServer, closeServer } = require('../server');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 
@@ -21,6 +21,14 @@ describe('Reality check', function () {
 });
 
 describe('Noteful', function() {
+
+  before(function() {
+    return runServer();
+  });
+
+  after(function() {
+    return closeServer();
+  });
 
   describe('Express static', function() {
     it('GET request "/" should return the index page', function() {
@@ -66,6 +74,18 @@ describe('Noteful', function() {
 
         });
     });
+
+    it('should return an empty array for an incorrect search', function() {
+      return chai.request(app)
+        .get('/v1/notes?searchTerm=This%20Will%20Not%20Be%20A%20Correct%20Search')
+        .then(function(res) {
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('array');
+          expect(res.body).to.have.length(0);
+        });
+    });
+
   });
 
 
