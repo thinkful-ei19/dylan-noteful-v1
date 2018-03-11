@@ -178,9 +178,6 @@ describe('Noteful', function() {
     });
   });
 
-});
-
-
 
 });
 
