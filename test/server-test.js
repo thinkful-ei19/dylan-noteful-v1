@@ -158,6 +158,28 @@ describe('Noteful', function() {
 
   });
 
+  describe('DELETE /v1/notes/:id', function () {
+
+    it('should delete an item by id', function () {
+      return chai.request(app)
+        .delete('/v1/notes/1005')
+        .then(function (res) {
+          expect(res).to.have.status(204);
+        });
+    });
+
+    it('should respond with a 404 for an invalid id', function () {
+      return chai.request(app)
+        .delete('/v1/notes/9999')
+        .catch(err => err.response)
+        .then(res => {
+          expect(res).to.have.status(404);
+        });
+    });
+  });
+
+});
+
 
 
 });
