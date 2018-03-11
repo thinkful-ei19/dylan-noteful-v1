@@ -118,8 +118,8 @@ describe('Noteful', function() {
     it('should create a new note and return the new data if valid', function() {
 
       const newData = {
-        title: 'This is testing title',
-        content: 'This is testing content'
+        'title': 'This is testing title',
+        'content': 'This is testing content'
       };
 
       return chai.request(app)
@@ -135,6 +135,27 @@ describe('Noteful', function() {
         });
         
     });
+
+    it('should return an error with invalid POST data', function() {
+      
+      const newData = {
+        'false': 'this is incorrect and invalid'
+      };
+
+      return chai.request(app)
+        .post('/v1/notes')
+        .send(newData)
+        .catch(function(err) {
+          return err.response;
+        })
+        .then(function(res) {
+          expect(res).to.have.status(400);
+          expect(res).to.be.json;
+          expect(res.body.message).to.equal('Missing `title` in request body');
+        });
+
+    }); 
+
   });
 
 
