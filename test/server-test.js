@@ -88,7 +88,54 @@ describe('Noteful', function() {
 
   });
 
+  describe('GET /v1/notes/:id', function() {
 
+    it('should return the correct note', function() {
+      return chai.request(app)
+        .get('/v1/notes/1001')
+        .then(function(res) {
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('object');
+          expect(res.body.id).to.equal(1001);
+        });
+    });
+
+    it('should return a 404 page not found', function() {
+      return chai.request(app)
+        .get('/v1/notes/2001')
+        .catch(function(err) {
+          return err.response;
+        })
+        .then(function(res) {
+          expect(res).to.have.status(404);
+        });
+    });
+
+  });
+
+  describe('POST /v1/notes', function() {
+    it('should create a new note and return the new data if valid', function() {
+
+      const newData = {
+        title: 'This is testing title',
+        content: 'This is testing content'
+      };
+
+      return chai.request(app)
+        .post('/v1/notes')
+        .send(newData)
+        .then(function(res) {
+          expect(res).to.have.status(201);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('object');
+          expect(res.body).to.include.keys('id', 'title', 'content');
+          expect(res.body.title).to.equal('This is testing title');
+          expect(res.body.content).to.equal('This is testing content');
+        });
+        
+    });
+  });
 
 
 
