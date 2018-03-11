@@ -158,6 +158,49 @@ describe('Noteful', function() {
 
   });
 
+  describe('PUT /v1/notes/:id', function() {
+
+    it('should update a note based on its id', function() {
+
+      const updateData = {
+        'title': 'this is updated title',
+        'content': 'this is updated content'
+      };
+
+      return chai.request(app)
+        .put('/v1/notes/1001')
+        .send(updateData)
+        .then(function(res) {
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('object');
+          expect(res.body.title).to.equal('this is updated title');
+          expect(res.body.content).to.equal('this is updated content');
+        });
+
+    });
+
+    it('should return an error with invalid id', function() {
+
+      const updateData = {
+        'title': 'this is updated title',
+        'content': 'this is updated content'
+      };
+
+      return chai.request(app)
+        .put('/v1/notes/2001')
+        .send(updateData)
+        .catch(function(err) {
+          return err.response;
+        })
+        .then(function(res) {
+          expect(res).to.have.status(404);
+        });
+
+    });
+
+  });
+
   describe('DELETE /v1/notes/:id', function () {
 
     it('should delete an item by id', function () {
